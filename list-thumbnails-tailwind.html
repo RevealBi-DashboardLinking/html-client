@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Thumbnails</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://dl.revealbi.io/reveal/libs/1.7.1/infragistics.reveal.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .dashboard-thumbnail {
+            height: 75px;
+            width: 75px;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+    </style>
+    <script>
+        $(document).ready(function() {
+            $.get("http://localhost:5111/dashboards/names", function(dashboards) {
+                dashboards.forEach(function(dashboard) {
+                    var dashboardItem = $('<div/>', { 
+                        class: 'dashboard-item flex items-center space-x-3 p-2 hover:bg-gray-100 rounded cursor-pointer' 
+                    }).appendTo('.dashboard-list');
+
+                    // Thumbnail container
+                    var thumbnailDiv = $('<div/>', {
+                        class: 'dashboard-thumbnail'
+                    }).appendTo(dashboardItem);
+
+                    // Title container
+                    var titleDiv = $('<div/>', { 
+                        class: 'dashboard-title text-sm font-normal' 
+                    }).text(dashboard.dashboardTitle).appendTo(dashboardItem);
+
+                    // Click event to toggle selected state
+                    dashboardItem.on('click', function() {
+                        // Remove selected state from all items
+                        $('.dashboard-item').removeClass('bg-blue-500 text-white hover:bg-gray-100');
+
+                        // Add selected state to the clicked item
+                        $(this).addClass('bg-blue-500 text-white').removeClass('hover:bg-gray-100');
+
+                        // Update the selected dashboard details
+                        var selectedDetails = `Title: ${dashboard.dashboardTitle}<br>File Name: ${dashboard.dashboardFileName}`;
+                        $('#dashboard-details').html(selectedDetails);
+                    });
+
+                    // Fetch and render the thumbnail
+                    $.get("http://localhost:5111/dashboards/" + dashboard.dashboardFileName + "/thumbnail", function(data) {
+                        var thumbnailView = new $.ig.RevealDashboardThumbnailView(thumbnailDiv[0]);
+                        thumbnailView.dashboardInfo = data.info;
+                    });
+                });
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-50 p-5">
+    <div class="container mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Dashboard Thumbnails</h2>
+        <div class="dashboard-list max-h-[50vh] overflow-y-auto w-[400px] p-4 bg-white shadow rounded"></div>
+        <div class="selected-dashboard mt-6 p-4 bg-gray-100 rounded shadow">
+            <strong>Selected Dashboard:</strong>
+            <p id="dashboard-details" class="text-gray-700">None</p>
+        </div>
+    </div>
+</body>
+</html>
