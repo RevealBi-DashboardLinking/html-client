@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Thumbnails</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://dl.revealbi.io/reveal/libs/1.7.1/infragistics.reveal.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
+        .thumbnail-container {
+            display: flex;
+            flex-wrap: wrap;
+            overflow-y: scroll;
+            height: 600px; 
+            width: 190px;
+        }
+        .dashboard-item {
+            margin: 10px;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        .dashboard-thumbnail {
+            height: 50px;
+            width: 75px;
+            position: relative;
+        }
+    </style>
+    <script>
+        $(document).ready(function() {
+            $.get("http://localhost:5111/dashboards/names", function(dashboards) {
+                dashboards.forEach(function(dashboard) {
+                    var dashboardContainer = $('<div/>', { class: 'dashboard-item' }).appendTo('.thumbnail-container');
+                    var thumbnailDiv = $('<div/>', {
+                        class: 'dashboard-thumbnail'
+                    }).appendTo(dashboardContainer);
+
+                    var titleDiv = $('<div/>').text(dashboard.dashboardTitle).appendTo(dashboardContainer);
+
+                    $.get("http://localhost:5111/dashboards/" + dashboard.dashboardFileName + "/thumbnail", function(data) {
+                        var thumbnailView = new $.ig.RevealDashboardThumbnailView(thumbnailDiv[0]);
+                        console.log("Thumbnail view initialized: ", data.info);
+                        thumbnailView.dashboardInfo = data.info;
+                    });
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="thumbnail-container"></div>
+</body>
+</html>
