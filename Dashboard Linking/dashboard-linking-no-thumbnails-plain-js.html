@@ -5,102 +5,214 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reveal Sdk - Web Component</title>
-    
+    <title>Reveal SDK - Web Component</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script src="https://dl.revealbi.io/reveal/libs/1.7.1/infragistics.reveal.js"></script>
 
     <style>
-        .revealView {
-            width: 100%;
-            height: calc(100vh - 40px);
+        body {
+            font-family: 'Roboto', sans-serif;
         }
 
-        .Reveal-Thumbnail-Box {
-            position: relative;
-            z-index: 0;
-            background-color: lightblue;
-            font-weight: bold;
-            font-size: x-large;
-            height: 125px;
-            width: 225px;
+        #dashboardSelector {
+            width: 350px;
             padding: 10px;
-            margin: 15px;
+            font-size: 16px;
+            border: 1px solid lightgrey;
+            outline: none; 
+        }
+        
+        #dbSelector {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            width: 400px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+
+        .modal-header h5 {
+            margin: 0;
+        }
+
+        .modal-body {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .list-group-item {
+            font-size: 16px;
+            font-weight: 400;
+            color: #333;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
             cursor: pointer;
         }
 
-        .modal {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
+        .list-group-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .cancel-button {
+            background-color: #d8e1ff;
+            color: #0056e0;
+            font-weight: 500;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .cancel-button:hover {
+            background-color: #c6d4ff;
         }
     </style>
 </head>
 
 <body>
-    <div id="revealView" class="revealView"></div>
+    <div style="max-width: calc(100vw - 50px); margin: auto; margin-top: 20px;">
+        <!-- Dashboard Selection -->
+        <div style="margin-bottom: 15px;">
+            <select id="dashboardSelector">
+                <option value="" disabled selected>Loading dashboards...</option>
+            </select>            
+        </div>
 
-    <dialog id="dbSelector" class="modal">
-        <div id="thumbnails"></div>
-        <button onclick="closeDialog()">Cancel</button>
-    </dialog>
+        <!-- Reveal Dashboard -->
+        <div id="revealView" style="height: calc(100vh - 120px); width: 100%;"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
-    <script src="https://dl.revealbi.io/reveal/libs/1.7.0/infragistics.reveal.js"></script>
+        <!-- Dashboard Linking Dialog -->
+        <div id="dbSelector">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Select a Dashboard</h5>
+                    <button id="closeDialog" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <ul id="thumbnails" style="list-style: none; padding: 0; margin: 0;">
+                        <!-- Thumbnails will be appended here -->
+                    </ul>
+                </div>
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="cancel-button" id="cancelDialog">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script type="text/javascript">
-        $.ig.RevealSdkSettings.setBaseUrl("http://localhost:5111/");
+    <script>
+        const baseUrl = "http://localhost:5111/";
+        const dashboardEndpoint = `${baseUrl}dashboards/names`;
+        let selectedDashboard = "";
 
-        const dialog = document.getElementById("dbSelector");
+        $.ig.RevealSdkSettings.setBaseUrl(baseUrl);
+        $.ig.RevealSdkSettings.enableActionsOnHoverTooltip = true;
 
-        $.ig.RVDashboard.loadDashboard("Northwind Revenue").then(dashboard => {
-            revealView = new $.ig.RevealView("#revealView");
-            revealView.dashboard = dashboard;
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDashboards(); 
+            document.getElementById('closeDialog').addEventListener('click', closeDialog);
+            document.getElementById('cancelDialog').addEventListener('click', closeDialog);
+        });
 
-            revealView.onDashboardSelectorRequested = (args) => {
-                openDialog(args.callback);
+        async function loadDashboard(dashboardFileName) {
+            try {
+                const dashboard = await $.ig.RVDashboard.loadDashboard(dashboardFileName);
+                const revealView = new $.ig.RevealView("#revealView");
+                revealView.dashboard = dashboard;
+                revealView.interactiveFilteringEnabled = true;
+
+                revealView.onDashboardSelectorRequested = (args) => {
+                    openDialog(args.callback);
+                };
+            } catch (error) {
+                console.error("Failed to load dashboard:", error);
+                alert("An error occurred while loading the dashboard.");
             }
+        }
 
-            revealView.onLinkedDashboardProviderAsync = (dashboardId, title) => {
-                return $.ig.RVDashboard.loadDashboard(dashboardId);
-            };
+        document.getElementById('dashboardSelector').addEventListener('change', function () {
+            selectedDashboard = this.value;
+            console.log(selectedDashboard);
+            if (selectedDashboard) {
+                loadDashboard(selectedDashboard);
+            }
         });
 
         function openDialog(callback) {
-            fetch("http://localhost:5111/dashboards/names")
+            fetch(dashboardEndpoint)
                 .then(resp => resp.json())
                 .then(data => {
-                    var container = document.querySelector("#thumbnails");
+                    const container = document.querySelector("#thumbnails");
                     container.innerHTML = "";
-
-                    data.forEach(id => {
-
-                        console.log("Container: " + container);
-                        console.log("ID: " + id);
-                        console.log("Callback: " + callback);
-
-                        createThumbnail(container, id.dashboardTitle, callback);
+                    data.forEach(({ dashboardFileName, dashboardTitle }) => {
+                    if (selectedDashboard !== dashboardFileName) {
+                            createThumbnail(container, dashboardTitle, dashboardFileName, callback);
+                        }
                     });
-
-                }).then(() => dialog.showModal());
+                })
+                .then(() => {
+                    document.getElementById('dbSelector').style.display = 'flex';
+            });
         }
 
-        function createThumbnail(container, id, callback) {
-            const button = document.createElement("button");
-            button.innerHTML = id;
-            button.addEventListener('click', (arg) => {
-                callback(id);
+        function createThumbnail(container, title, fileName, callback) {
+            const listItem = document.createElement("li");
+            listItem.className = "list-group-item";
+            listItem.innerText = title;
+            listItem.dataset.fileName = fileName;
+            listItem.addEventListener('click', () => {
+                const selectedFileName = listItem.dataset.fileName;
+                callback(selectedFileName); 
                 closeDialog();
             });
-            button.className = "Reveal-Thumbnail-Box";
-            container.appendChild(button);
+            container.appendChild(listItem);
         }
 
         function closeDialog() {
-            dialog.close();
+            document.getElementById('dbSelector').style.display = 'none';
         }
 
+        async function fetchDashboards() {
+            try {
+                const response = await fetch(dashboardEndpoint);
+                if (!response.ok) throw new Error("Failed to fetch dashboard names");
+                const dashboards = await response.json();
+
+                const dashboardSelector = document.getElementById("dashboardSelector");
+                dashboardSelector.innerHTML = '<option value="" disabled selected>Select a dashboard</option>';
+
+                dashboards.forEach(({ dashboardFileName, dashboardTitle }) => {
+                    const option = document.createElement("option");
+                    option.value = dashboardFileName;
+                    option.textContent = dashboardTitle;
+                    dashboardSelector.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching dashboards:", error);
+                alert("Failed to load dashboards.");
+            }
+        }
     </script>
 </body>
 
