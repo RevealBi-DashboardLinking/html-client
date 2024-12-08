@@ -47,9 +47,16 @@
             overflow: hidden;
         }
 
-        .modal-header, .modal-footer {
-            padding: 10px;
+        .modal-header {
+            padding: 15px;
             background: #f1f1f1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .modal-header h5 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
         }
 
         .modal-body {
@@ -66,6 +73,12 @@
             border-radius: 5px;
             margin-bottom: 10px;
             background: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: #e9ecef;
         }
 
         .dashboard-thumbnail {
@@ -73,7 +86,7 @@
             width: 75px;
             margin-right: 15px;
             border-radius: 6px;
-            position:relative;
+            position: relative;
             overflow: hidden;
             background-color: #eaeaea;
         }
@@ -83,12 +96,25 @@
             font-size: 16px;
         }
 
-        .modal-close {
-            background: none;
+        .modal-footer {
+            text-align: center;
+            padding: 15px;
+            background: #f1f1f1;
+            border-top: 1px solid #ddd;
+        }
+
+        .modal-footer .modal-close {
+            background-color: #cce5ff;
+            color: #004085;
+            padding: 10px 20px;
             border: none;
-            font-size: 18px;
+            border-radius: 20px;
             cursor: pointer;
-            float: right;
+            font-size: 16px;
+        }
+
+        .modal-footer .modal-close:hover {
+            background-color: #b8daff;
         }
 
         .modal-overlay {
@@ -101,6 +127,12 @@
             display: none;
             z-index: 999;
         }
+
+        .selected-dashboard {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 500;
+        }
     </style>
     <script>
         $(document).ready(function () {
@@ -108,6 +140,9 @@
                 $.get("http://localhost:5111/dashboards/names", function (dashboards) {
                     var modalBody = $('#thumbnailModal .modal-body');
                     modalBody.empty();
+
+                    // Reset scroll position to the top
+                    modalBody.scrollTop(0);
 
                     dashboards.forEach(function (dashboard) {
                         var listItem = $('<div/>', { class: 'list-group-item' }).appendTo(modalBody);
@@ -124,6 +159,16 @@
                                 thumbnailView.dashboardInfo = data.info;
                             }
                         });
+
+                        // Close modal and show selected item on click
+                        listItem.on("click", function () {
+                            closeDialog();
+                            $('#selectedDashboard').html(`
+                                <strong>Selected:</strong><br>
+                                <span>Title: ${dashboard.dashboardTitle}</span><br>
+                                <span>File Name: ${dashboard.dashboardFileName}</span>
+                            `);
+                        });
                     });
                 });
             }
@@ -135,22 +180,26 @@
             });
 
             $('.modal-close').click(function () {
+                closeDialog();
+            });
+
+            function closeDialog() {
                 $('.modal-overlay').hide();
                 $('#thumbnailModal').hide();
-            });
+            }
         });
     </script>
 </head>
 <body>
     <div class="container">
         <button id="showDialogButton">Show Thumbnails</button>
+        <div id="selectedDashboard" class="selected-dashboard">Selected: None</div>
     </div>
 
     <div class="modal-overlay"></div>
     <div class="modal" id="thumbnailModal">
         <div class="modal-header">
             <h5>Dashboard Thumbnails</h5>
-            <button class="modal-close">&times;</button>
         </div>
         <div class="modal-body">
             <!-- Thumbnails will be populated here -->
