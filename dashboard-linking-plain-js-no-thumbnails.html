@@ -11,7 +11,7 @@
     <style>
         .revealView {
             width: 100%;
-            height: 100vh;
+            height: calc(100vh - 40px);
         }
 
         .Reveal-Thumbnail-Box {
@@ -50,12 +50,11 @@
     <script src="https://dl.revealbi.io/reveal/libs/1.7.0/infragistics.reveal.js"></script>
 
     <script type="text/javascript">
-        //$.ig.RevealSdkSettings.setBaseUrl("http://localhost:5111/");
-        $.ig.RevealSdkSettings.setBaseUrl("https://acmeanalyticsserver.azurewebsites.net/");
+        $.ig.RevealSdkSettings.setBaseUrl("http://localhost:5111/");
 
         const dialog = document.getElementById("dbSelector");
 
-        $.ig.RVDashboard.loadDashboard("banking").then(dashboard => {
+        $.ig.RVDashboard.loadDashboard("Northwind Revenue").then(dashboard => {
             revealView = new $.ig.RevealView("#revealView");
             revealView.dashboard = dashboard;
 
@@ -69,7 +68,7 @@
         });
 
         function openDialog(callback) {
-            fetch("https://acmeanalyticsserver.azurewebsites.net/dashboards/names")
+            fetch("http://localhost:5111/dashboards/names")
                 .then(resp => resp.json())
                 .then(data => {
                     var container = document.querySelector("#thumbnails");
