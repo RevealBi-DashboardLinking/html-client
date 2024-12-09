@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flyout Menu with iframe</title>
+    <title>Elegant Flyout Menu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -11,81 +11,180 @@
             padding: 0;
             overflow: hidden;
         }
-        #flyoutMenu {
+
+        #header {
             position: fixed;
             top: 0;
             left: 0;
-            height: 100%;
-            width: 200px;
-            background-color: #343a40;
+            width: 100%;
+            height: 50px;
+            background-color: #EC427A;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 1100;
+            color: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+        }
+
+        #menuToggle {
+            background-color: transparent;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #flyoutMenu {
+            position: fixed;
+            top: 50px; 
+            left: 0;
+            height: calc(100% - 50px);
+            width: 300px;
+            background-color: #f8f9fa;
             z-index: 1050;
-            padding-top: 1rem;
+            transform: translateX(-400px);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        #flyoutMenu.open {
+            transform: translateX(0);
+        }
+
+        #flyoutMenu h5 {
+            color: black;
+            margin-left: 15px;
+            margin-top: 10px;
+            font-size: 18px;
         }
         #flyoutMenu .nav-link {
-            color: #fff;
+            color: black;
+            margin: 5px 0;
+            text-decoration: none;
         }
         #flyoutMenu .nav-link:hover {
-            background-color: #495057;
+            background-color: #e9ecef;
+            cursor: pointer;
         }
+
         iframe {
             position: fixed;
-            top: 0;
-            left: 200px;
-            width: calc(100% - 175px);
-            height: 100%;
+            top: 50px; 
+            left: 0;
+            width: 100%;
+            height: calc(100% - 50px);
             border: none;
+            transition: left 0.3s ease;
+        }
+        iframe.menu-open {
+            left: 300px;
+            width: calc(100% - 400px);
+        }
+
+        #header-logo {
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            margin-left: 10px; 
+            background-color: white; 
+        }
+
+        #header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
         }
     </style>
 </head>
 <body>
-    <!-- Persistent Flyout Menu -->
-    <div id="flyoutMenu">
-        <ul class="nav flex-column p-3">
+    <div id="header">
+        <button id="menuToggle">☰</button>
+       
+        <div id="header-logo">
+            <img src="reveal-logo-small.png" alt="Reveal Logo">
+        </div>
+        <span class="ms-2"><strong>Reveal</strong> : Thumbnail Playground</span>
 
+    </div>
 
+    <div id="flyoutMenu" class="open">
+        <ul class="nav flex-column px-3">
+            <h5>List Thumbnails</h5>
             <li class="nav-item">
-                <a href="dashboard-linking-bootstrap.html" target="contentFrame" class="nav-link">Load Dashboards No Thumbnails</a>
+                <a href="List Thumbnails/list-thumbnails-plain-js.html" target="contentFrame" class="nav-link">Plain JavaScript</a>
             </li>
-
-
             <li class="nav-item">
-                <a href="dashboard-linking-plain-js-no-thumbnails.html" target="contentFrame" class="nav-link">Plain JavaScript - No Thumbnails</a>
+                <a href="List Thumbnails/list-thumbnails-bootstrap.html" target="contentFrame" class="nav-link">Bootstrap</a>
             </li>
-
             <li class="nav-item">
-                <a href="dashboard-linking-plain-js-thumbnails.html" target="contentFrame" class="nav-link">Plain JavaScript - Thumbnails</a>
+                <a href="List Thumbnails/list-thumbnails-tailwind.html" target="contentFrame" class="nav-link">Tailwind CSS</a>
             </li>
-
-            <hr />
-            
+            <hr/>
+            <h5>Show Thumbnail Dialog</h5>
             <li class="nav-item">
-                <a href="dashboard-linking-tailwind.html" target="contentFrame" class="nav-link">Tailwind CSS - Thumbnails</a>
+                <a href="Thumbnail Dialogs/show-thumbnails-dialog-plain-js.html" target="contentFrame" class="nav-link">Plain JavaScript</a>
             </li>
-
-            <hr />
-
             <li class="nav-item">
-                <a href="show-thumbnails-dialog-bootstrap.html" target="contentFrame" class="nav-link">Bootstrap Dialog - Thumbnails</a>
+                <a href="Thumbnail Dialogs/show-thumbnails-dialog-bootstrap.html" target="contentFrame" class="nav-link">Bootstrap</a>
             </li>
-
-
-            <hr />
+            <hr/>
+            <h5>Dashboard Linking</h5>
             <li class="nav-item">
-                <a href="show-thumbnails-dialog-js.html" target="contentFrame" class="nav-link">JavaScript Dialog - Thumbnails</a>
+                <a href="dashboard linking/dashboard-linking-no-thumbnails-plain-js.html" target="contentFrame" class="nav-link">No Thumbnails / Plain JavaScript</a>
             </li>
-
-            <hr />
             <li class="nav-item">
-                <a href="show-thumbnails.html" target="contentFrame" class="nav-link">HTML List - Thumbnails</a>
+                <a href="dashboard linking/dashboard-linking-no-thumbnails-bootstrap.html" target="contentFrame" class="nav-link">No Thumbnails / Bootstrap</a>
             </li>
-
+            <li class="nav-item">
+                <a href="dashboard linking/dashboard-linking-thumbnails-plain-js.html" target="contentFrame" class="nav-link">Thumbnails / Plain JavaScript</a>
+            </li>
+            <li class="nav-item">
+                <a href="dashboard linking/dashboard-linking-thumbnails-tailwind.html" target="contentFrame" class="nav-link">Thumbnails / Tailwind CSS</a>
+            </li>
+            <hr/>
+            <h5>New Dashboard</h5>
+            <li class="nav-item">
+                <a href="create-dashboard.html" target="contentFrame" class="nav-link">Add New</a>
+            </li>
         </ul>
     </div>
 
-    <!-- Content Frame -->
-    <iframe name="contentFrame" src="dashboard-linking-bootstrap.html"></iframe>
+    <iframe name="contentFrame" src="List Thumbnails/list-thumbnails-plain-js.html"></iframe>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const flyoutMenu = document.getElementById('flyoutMenu');
+        const iframe = document.querySelector('iframe');
+        const navLinks = document.querySelectorAll('#flyoutMenu .nav-link');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const flyoutMenu = document.getElementById('flyoutMenu');
+            const iframe = document.querySelector('iframe');
+            if (flyoutMenu.classList.contains('open')) {
+                iframe.classList.add('menu-open');
+            }
+        });
+
+        menuToggle.addEventListener('click', () => {
+            flyoutMenu.classList.toggle('open');
+            iframe.classList.toggle('menu-open');
+        });
+
+        // Close flyout menu on link click
+        // I removed this, just it can be added back in
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                //flyoutMenu.classList.remove('open');
+                //iframe.classList.remove('menu-open');
+            });
+        });
+    </script>
 </body>
 </html>

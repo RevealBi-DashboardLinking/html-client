@@ -9,14 +9,22 @@
         body {
             font-family: 'Roboto', sans-serif;
         }
+        h5 {
+            margin-left: 20px;
+        }
         .dashboard-list {
             max-height: 50vh;
             overflow-y: auto;
             width: 400px;
             margin-left: 20px;
+            border: 1px solid lightgray; /* Add border around the list */
+            border-radius: 5px; /* Optional: rounded corners */
+            padding: 10px; /* Add padding inside the list */
+            background-color: #fff; /* Optional: white background */
         }
         .dashboard-item {
             margin-bottom: 15px;
+            padding-left: 10px; /* Consistent padding for items */
         }
         .dashboard-thumbnail {
             height: 75px;
@@ -37,6 +45,9 @@
             background-color: #007bff; 
             color: white;
             border-radius: 5px; 
+        }
+        .selected-dashboard {
+            margin-left: 20px; /* Align with the dashboard list */
         }
     </style>
     <script>
@@ -79,7 +90,7 @@
 </head>
 <body>
     <div class="container-fluid mt-4">
-        <h2>Dashboard Thumbnails</h2>
+        <h5>Dashboard Thumbnails</h5>
         <div class="dashboard-list"></div>
         <div class="selected-dashboard mt-4">
             <strong>Selected Dashboard:</strong>

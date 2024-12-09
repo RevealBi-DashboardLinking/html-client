@@ -13,6 +13,7 @@
             font-size: 24px;
             margin-bottom: 20px;
         }
+
         .dashboard-list {
             max-height: 50vh;
             overflow-y: auto;
@@ -61,7 +62,7 @@
                 .then(dashboards => {
                     const dashboardList = document.querySelector('.dashboard-list');
 
-                    dashboards.forEach(dashboard => {
+                    dashboards.forEach((dashboard, index) => {
                         // Create the dashboard item container
                         const dashboardItem = document.createElement('div');
                         dashboardItem.className = 'dashboard-item';
@@ -102,9 +103,17 @@
 
                         // Append the dashboard item to the list
                         dashboardList.appendChild(dashboardItem);
+
+                        // Automatically select the first item
+                        if (index === 0) {
+                            dashboardItem.classList.add('selected');
+                            const selectedDetails = `Title: ${dashboard.dashboardTitle}<br>File Name: ${dashboard.dashboardFileName}`;
+                            document.getElementById('dashboard-details').innerHTML = selectedDetails;
+                        }
                     });
                 });
         });
+
     </script>
 </head>
 <body>
