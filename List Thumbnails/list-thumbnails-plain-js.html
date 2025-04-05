@@ -3,7 +3,7 @@
 <head>
     <title>Dashboard Thumbnails</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://dl.revealbi.io/reveal/libs/1.7.1/infragistics.reveal.js"></script>
+    <script src="https://dl.revealbi.io/reveal/libs/1.7.3/infragistics.reveal.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,7 +95,7 @@
 
                         // Fetch and render the thumbnail
                         fetch(`http://localhost:5111/dashboards/${dashboard.dashboardFileName}/thumbnail`)
-                            .then(response => response.json())
+                          .then(response => response.json())
                             .then(data => {
                                 const thumbnailView = new $.ig.RevealDashboardThumbnailView(thumbnailDiv);
                                 thumbnailView.dashboardInfo = data.info;
